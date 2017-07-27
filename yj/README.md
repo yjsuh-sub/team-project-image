@@ -75,49 +75,80 @@ Note that, The human accuracy on this dataset is around $65\pm5$% [1]
 
 ## Summary of Keras documentation 
 
+### Keras에서 inception layer 구현
+```buildoutcfg
+input_img = Input(shape=(48, 48, 1))
+x = Conv2D(64, (7, 7), padding='same', activation='relu')(input_img)
+x = MaxPooling2D((3, 3), strides=(1, 1), padding='same')(x)
+x = Conv2D(192, (3, 3), padding='same', activation='relu')(input_img)
+x = MaxPooling2D((3, 3), strides=(1, 1), padding='same')(x)
+# inception module with dimension reduction
+# Inception 시작
+tower_0 = Conv2D(64, (1, 1), padding='same', activation='relu')(x)
+
+tower_1 = Conv2D(64, (1, 1), padding='same', activation='relu')(x)
+tower_1 = Conv2D(64, (3, 3), padding='same', activation='relu')(tower_1)
+
+tower_2 = Conv2D(64, (1, 1), padding='same', activation='relu')(x)
+tower_2 = Conv2D(64, (5, 5), padding='same', activation='relu')(tower_2)
+
+tower_3 = MaxPooling2D((3, 3), strides=(1, 1), padding='same')(x)
+tower_3 = Conv2D(64, (1, 1), padding='same', activation='relu')(tower_3)
+
+output = keras.layers.concatenate([tower_0, tower_1, tower_2, tower_3], axis=1)
+# inception 끝
+output = Flatten()(output)
+output = Dropout(0.5)(output)
+predictions = Dense(7, activation='softmax')(output)
+model = Model(inputs=input_img, outputs=predictions)
+```
+이후 원하는 설정(optimizer, loss, metric 등)으로 `compile` 후 `fit`하면 된다.
+
 ### Keras model 저장
-* model.save(filepath): 모델 저장하기. 이 때 저장할 정보는 다음과 같습니다.
+* `model.save(filepath)`: 모델 저장하기. 이 때 저장할 정보는 다음과 같습니다.
     * 모델의 구조(architecture, 아키텍처)
     * 모델이 가진 weight
     * 학습설정(configuration)
     * 최적화 상태, 학습중지상태에서 학습재개
 
-* load_model(filepath): 저장한 모델 불러오기`
+* `load_model(filepath)`: 저장한 모델 불러오기`
 
 ### 유용한 option
-* EarlyStopping: validation loss가 더 이상 감소하지 않을 때 학습중지옵션
+* `EarlyStopping`: validation loss가 더 이상 감소하지 않을 때 학습중지옵션
 ```buildoutcfg
 from keras.callbacks import EarlyStopping
 early_stopping = EarlyStopping(monitor='val_loss', patience=2)
 model.fit(x, y, validation_split=0.2, cllbacks=[early_stopping])
 ```
-* ModelCheckpoint: 각 epoch마다 모델 저장, filepath에는 epoch, logs의 key 등 사용 가능. 예) weights.{epoch:02d}-val_loss:.2f}.hdf5
+* `ModelCheckpoint`: 각 epoch마다 모델 저장, filepath에는 epoch, logs의 key 등 사용 가능. 예) weights.{epoch:02d}-val_loss:.2f}.hdf5
 ```buildoutcfg
 keras.callbacks.ModelCheckpoint(filepath, monitor='val_loss', verbose=0, save_best_only=False, save_weights_only=False, mode='auto', period=1
 ```
-`keys of log`
-* on_epoch_end: acc, loss, val_loss, val_acc
-* on_batch_begin: size - 현재 batch의 샘플 수
-* on_batch_end: loss, acc
+#### keys of log
+* `on_epoch_end`: `acc`, `loss`, `val_loss`, `val_acc`
+* `on_batch_begin`: `size` - 현재 batch의 샘플 수
+* `on_batch_end`: `loss`, `acc`
 
 ### Available loss functions
-* mean_squared_error
-* mean_absolute_error
-* mean_absolute_percentage_error
-* mean_squared_logarithmic_error
-* squared_hinge
-* hinge
-* categorical_hinge
-* logcosh
-* categorical_crossentropy
-* sparse_categorical_crossentropy
-* binary_crossentropy
-* kullback_leibler_divergence
-* poisson
-* cosine_proximity
+* `mean_squared_error`
+* `mean_absolute_error`
+* `mean_absolute_percentage_error`
+* `mean_squared_logarithmic_error`
+* `squared_hinge`
+* `hinge`
+* `categorical_hinge`
+* `logcosh`
+* `categorical_crossentropy`
+* `sparse_categorical_crossentropy`
+* `binary_crossentropy`
+* `kullback_leibler_divergence`
+* `poisson`
+* `cosine_proximity`
 
 ## Reference
 * keras.io: keras documentation
 * [1] I. J. Goodfellow, D. Erhan, P. L. Carrier, A. Courville, M. Mirza, B. Hamner, W. Cukierski, Y. Tang, D. Thaler, D.-H. Lee, Y. Zhou,C. Ramaiah, F. Feng, R. Li, X. Wang, D. Athanasakis, J. Shawe-Taylor, M. Milakov, J. Park, R. Ionescu, M. Popescu, C. Grozea, J. Bergstra, J. Xie, L. Romaszko, B. Xu, Z. Chuang, and Y. Bengio, “Challenges in representation learning: A report on three machine learning contests,”Neural Networks, vol. 64, pp. 59–63, 2015.
 * [2] Christopher Pramerdorfer, Martin Kampel, "Facial Expression Recognition using
 Convolutional Neural Networks: State of the Art", 2016
+* SImple explanation about why $1\times 1$ convolution layer which relates to inception layer, http://iamaaditya.github.io/2016/03/one-by-one-convolution/
+* Inception 레이어 한글설명 https://norman3.github.io/papers/docs/google_inception.html
