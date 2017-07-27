@@ -77,6 +77,7 @@ Note that, The human accuracy on this dataset is around $65\pm5$% [1]
 
 ### Keras에서 inception layer 구현
 ```buildoutcfg
+from keras.layers import Conv2D, MaxPooling2D, Input, Dense, Flatten, Dropout
 input_img = Input(shape=(48, 48, 1))
 x = Conv2D(64, (7, 7), padding='same', activation='relu')(input_img)
 x = MaxPooling2D((3, 3), strides=(1, 1), padding='same')(x)
