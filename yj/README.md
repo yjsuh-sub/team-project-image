@@ -119,3 +119,5 @@ keras.callbacks.ModelCheckpoint(filepath, monitor='val_loss', verbose=0, save_be
 ## Reference
 * keras.io: keras documentation
 * [1] I. J. Goodfellow, D. Erhan, P. L. Carrier, A. Courville, M. Mirza, B. Hamner, W. Cukierski, Y. Tang, D. Thaler, D.-H. Lee, Y. Zhou,C. Ramaiah, F. Feng, R. Li, X. Wang, D. Athanasakis, J. Shawe-Taylor, M. Milakov, J. Park, R. Ionescu, M. Popescu, C. Grozea, J. Bergstra, J. Xie, L. Romaszko, B. Xu, Z. Chuang, and Y. Bengio, “Challenges in representation learning: A report on three machine learning contests,”Neural Networks, vol. 64, pp. 59–63, 2015.
+* [2] Christopher Pramerdorfer, Martin Kampel, "Facial Expression Recognition using
+Convolutional Neural Networks: State of the Art", 2016
