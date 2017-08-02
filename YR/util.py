@@ -36,3 +36,17 @@ def check_generator(X, Y, arg):
     for X_batch, Y_batch in datagen.flow(X, Y, batch_size=8, shuffle=False):
         break
     print_img(row=1, col=8, img_target=X_batch, idx_target=Y_batch, idx=[0, 1, 2, 3, 4, 5, 6, 7])
+
+def print_ppscore(df, norm):
+    dfRes0 = pd.DataFrame(df.pred0, columns=['pred0'])
+    dfRes0['origin'] = norm
+    dfRes0['result'] = df.pred0 == norm
+
+    dfRes1 = pd.DataFrame(df.pred1, columns=['pred1'])
+    dfRes1['origin'] = norm
+    dfRes1['result'] = df.pred1 == norm
+
+    acc0 = float((dfRes0['result'] == True).sum()) / len(dfRes0['result'])
+    acc1 = float((dfRes1['result'] == True).sum()) / len(dfRes1['result'])
+    print('acc0: {}'.format(acc0))
+    print('acc1: {}'.format(acc1))
